@@ -1,0 +1,7 @@
+name: PlayerStrain
+version: '1.0.0'
+main: com.sjkz1.playerStrain.PlayerStrain
+api-version: '1.21'
+prefix: sk-playerstress
+authors: [ SJKZ1 ]
+description: Add stress to player when enter dark place
