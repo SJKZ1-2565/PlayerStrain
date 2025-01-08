@@ -5,3 +5,9 @@ api-version: '1.21'
 prefix: sk-playerstress
 authors: [ SJKZ1 ]
 description: Add stress to player when enter dark place
+commands:
+  stress:
+    description: Stress command
+    aliases: [ sts ]
+    permission: "2"
+    usage: "/stress <player> <set|get|remove> <value>"

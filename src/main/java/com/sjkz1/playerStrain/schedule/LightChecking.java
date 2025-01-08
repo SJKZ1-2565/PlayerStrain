@@ -4,38 +4,68 @@ import com.sjkz1.playerStrain.PlayerStrain;
 import com.sjkz1.playerStrain.player.PlayerStress;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Collection;
 import java.util.Random;
 
-public class LightChecking implements Runnable {
+public class LightChecking extends PlayerStress implements Runnable {
 
     private final PlayerStrain plugin;
+    private final FileConfiguration config;
+    private final NamespacedKey attributeKey;
 
     public LightChecking(PlayerStrain plugin) {
         this.plugin = plugin;
+        attributeKey = new NamespacedKey(plugin, "stress");
+        config = plugin.getConfig();
+
     }
 
     @Override
     public void run() {
         Collection<? extends Player> players = this.plugin.getServer().getOnlinePlayers();
         for (Player player : players) {
-            PlayerStress playerStress = new PlayerStress(player);//TODO Fix stress logic
             Random random = new Random();
             int blockLightLvl = player.getLocation().getBlock().getLightLevel();
-            player.sendActionBar(Component.text("Current Light Level ").append(Component.text(blockLightLvl)).style(builder -> {
-                builder.color(TextColor.fromHexString("#41e852"));
-            }));
             if (blockLightLvl < 7) {
+                player.sendActionBar(Component.text("Current Player Stress ").append(Component.text(getStress(player))).style(builder -> {
+                    builder.color(TextColor.fromHexString("#41e852"));
+                }));
                 if (random.nextInt(10) == 0) {
-                    playerStress.setStress(playerStress.getStress() + 1);
-                    player.sendActionBar(Component.text("Current Player Stress ").append(Component.text(playerStress.getStress())).style(builder -> {
-                        builder.color(TextColor.fromHexString("#41e852"));
-                    }));
-
+                    if (getStress(player) < 10) {
+                        setStress(player, getStress(player) + 1);
+                    }
                 }
+            } else {
+                removeStress(player);
             }
         }
+    }
+
+    @Override
+    public void setStress(Player player, int value) {
+        PersistentDataContainer dataContainer = player.getPersistentDataContainer();
+        dataContainer.set(attributeKey, PersistentDataType.INTEGER, value);
+        config.set("players." + player.getUniqueId() + ".custom_attribute", getStress(player));
+        plugin.saveConfig();
+    }
+
+    @Override
+    public int getStress(Player player) {
+        PersistentDataContainer dataContainer = player.getPersistentDataContainer();
+        return dataContainer.getOrDefault(attributeKey, PersistentDataType.INTEGER, 0);
+    }
+
+    @Override
+    public void removeStress(Player player) {
+        PersistentDataContainer dataContainer = player.getPersistentDataContainer();
+        dataContainer.remove(attributeKey);
+        config.set("players." + player.getUniqueId() + ".custom_attribute", getStress(player));
+        plugin.saveConfig();
     }
 }
