@@ -5,7 +5,6 @@ import com.sjkz1.playerStrain.player.PlayerStress;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -16,14 +15,11 @@ import java.util.Random;
 public class LightChecking extends PlayerStress implements Runnable {
 
     private final PlayerStrain plugin;
-    private final FileConfiguration config;
     private final NamespacedKey attributeKey;
 
     public LightChecking(PlayerStrain plugin) {
         this.plugin = plugin;
         attributeKey = new NamespacedKey(plugin, "stress");
-        config = plugin.getConfig();
-
     }
 
     @Override
@@ -51,8 +47,6 @@ public class LightChecking extends PlayerStress implements Runnable {
     public void setStress(Player player, int value) {
         PersistentDataContainer dataContainer = player.getPersistentDataContainer();
         dataContainer.set(attributeKey, PersistentDataType.INTEGER, value);
-        config.set("players." + player.getUniqueId() + ".custom_attribute", getStress(player));
-        plugin.saveConfig();
     }
 
     @Override
@@ -65,7 +59,5 @@ public class LightChecking extends PlayerStress implements Runnable {
     public void removeStress(Player player) {
         PersistentDataContainer dataContainer = player.getPersistentDataContainer();
         dataContainer.remove(attributeKey);
-        config.set("players." + player.getUniqueId() + ".custom_attribute", getStress(player));
-        plugin.saveConfig();
     }
 }
