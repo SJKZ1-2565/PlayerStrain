@@ -18,10 +18,10 @@ public class StressCommand extends PlayerStress implements CommandExecutor {
         if (strings.length == 0) {
             return false;
         }
-        if (!strings[0].equals(commandSender.getName())) {
+        if (!strings[0].equals(commandSender.name().toString())) {
             return false;
         }
-        if (strings[0].isEmpty() || strings[1].isEmpty() || strings[2].isEmpty()) {
+        if (strings[0].isEmpty()) {
             return false;
         }
         if (!strings[1].equalsIgnoreCase("set")) {
