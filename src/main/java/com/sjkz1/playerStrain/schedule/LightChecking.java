@@ -29,12 +29,12 @@ public class LightChecking extends PlayerStress implements Runnable {
             Random random = new Random();
             int blockLightLvl = player.getLocation().getBlock().getLightLevel();
             if (blockLightLvl < 7) {
-                player.sendActionBar(Component.text("Current Player Stress ").append(Component.text(getStress(player))).style(builder -> {
-                    builder.color(TextColor.fromHexString("#41e852"));
-                }));
                 if (random.nextInt(10) == 0) {
                     if (getStress(player) < 10) {
                         setStress(player, getStress(player) + 1);
+                        player.sendActionBar(Component.text("Current Player Stress ").append(Component.text(getStress(player))).style(builder -> {
+                            builder.color(TextColor.fromHexString("#41e852"));
+                        }));
                     }
                 }
             } else {
